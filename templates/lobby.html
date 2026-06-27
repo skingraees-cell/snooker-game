@@ -1,66 +1,154 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snooker Lobby</title>
+
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+    <style>
+        body{
+            font-family:Arial;
+            background:#0b6623;
+            color:white;
+            margin:0;
+            padding:30px;
+        }
+
+        h1{
+            text-align:center;
+        }
+
+        .box{
+            background:white;
+            color:black;
+            max-width:700px;
+            margin:auto;
+            padding:20px;
+            border-radius:12px;
+        }
+
+        ul{
+            list-style:none;
+            padding:0;
+        }
+
+        li{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin:10px 0;
+            padding:10px;
+            background:#f2f2f2;
+            border-radius:6px;
+        }
+
+        button{
+            background:#0b6623;
+            color:white;
+            border:none;
+            padding:8px 14px;
+            border-radius:5px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#0a4f1b;
+        }
+
+        #status{
+            color:green;
+            font-weight:bold;
+        }
+    </style>
+
 </head>
+
 <body>
+
+<div class="box">
 
 <h1>🎱 Snooker Lobby</h1>
 
-<p>Welcome: {{ email }}</p>
+<p>
+Welcome:
+<b>{{ email }}</b>
+</p>
+
+<p id="status">
+Connected
+</p>
 
 <h3>Online Players</h3>
 
 <ul id="players"></ul>
 
-<script>
-const socke = io();
+</div>
 
-socket.on("online_users", function(users){
-    let list = document.getElementById("players");
-    list.innerHTML = "";
+<script>
+
+const socket = io();
+
+function challenge(player){
+
+    socket.emit("challenge",{
+        player:player
+    });
+
+}
+
+socket.on("online_users",function(users){
+
+    let list=document.getElementById("players");
+
+    list.innerHTML="";
 
     users.forEach(function(user){
-        let li = document.createElement("li");
-        li.innerText = user;
-        list.appendChild(li);
+
+        if(user!=="{{ email }}"){
+
+            let li=document.createElement("li");
+
+            li.innerHTML=
+            "<span>"+user+"</span>"+
+            "<button onclick=\"challenge('"+user+"')\">Play</button>";
+
+            list.appendChild(li);
+
+        }
+
     });
+
 });
+
+socket.on("challenge_received",function(data){
+
+    if(data.to=="{{ email }}"){
+
+        if(confirm(data.from+" wants to play with you.\nAccept?")){
+
+            socket.emit("accept_challenge",{
+
+                room:data.from+"_"+data.to
+
+            });
+
+        }
+
+    }
+
+});
+
+socket.on("game_started",function(data){
+
+    alert("Game Room Created:\n"+data.room);
+
+    // وروسته به دلته اصلي Snooker Game پرانیزو.
+
+});
+
 </script>
 
 </body>
 </html>
-<h2>Online Players</h2>
-
-<ul id="players">
-{% for user in online_users %}
-    {% if user != email %}
-    <li>
-        {{ user }}
-        <button onclick="challenge('{{ user }}')">Play</button>
-    </li>
-    {% endif %}
-{% endfor %}
-</ul>
-
-<script>
-function challenge(player){
-    alert("Challenge sent to: " + player);
-}
-</script>
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-
-<script>
-const socket = io();
-
-function challenge(player){
-    socket.emit("challenge", {
-        player: player
-    });
-}
-
-socket.on("challenge_received", function(data){
-    alert(data.from + " wants to play with you!");
-});
-</script>
