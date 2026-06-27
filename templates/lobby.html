@@ -15,7 +15,7 @@
 <ul id="players"></ul>
 
 <script>
-const socket = io();
+const socke = io();
 
 socket.on("online_users", function(users){
     let list = document.getElementById("players");
@@ -48,4 +48,19 @@ socket.on("online_users", function(users){
 function challenge(player){
     alert("Challenge sent to: " + player);
 }
+</script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script>
+const socket = io();
+
+function challenge(player){
+    socket.emit("challenge", {
+        player: player
+    });
+}
+
+socket.on("challenge_received", function(data){
+    alert(data.from + " wants to play with you!");
+});
 </script>

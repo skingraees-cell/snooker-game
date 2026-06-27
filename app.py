@@ -132,6 +132,14 @@ def disconnect():
         online_users.discard(session["email"])
     emit("online_users", list(online_users), broadcast=True)
 
+from flask_socketio import emit
+
+@socketio.on("challenge")
+def handle_challenge(data):
+    emit("challenge_received", {
+        "from": session["email"]
+    }, broadcast=True)
+
 if __name__ == "__main__":
    socketio.run(app, debug=True)
    
