@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect
-import sqlite3
 
 app = Flask(__name__)
 
@@ -80,6 +79,21 @@ def login():
         return render_template("dashboard.html")
     else:
         return "Invalid login"
+
+@app.route("/admin")
+def admin():
+    if request.args.get("key") != "123456789":
+        return "Access Denied", 403
+
+    conn = sqlite3.connect("users.db")
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, email FROM users")
+    users = cur.fetchall()
+
+    conn.close()
+
+    return render_template("admin.html", users=users)
 
 
 if __name__ == "__main__":
