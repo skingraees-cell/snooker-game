@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Snooker Lobby</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+
+<h1>🎱 Snooker Lobby</h1>
+
+<p>Welcome: {{ email }}</p>
+
+<h3>Online Players</h3>
+
+<ul id="players"></ul>
+
+<script>
+const socket = io();
+
+socket.on("online_users", function(users){
+    let list = document.getElementById("players");
+    list.innerHTML = "";
+
+    users.forEach(function(user){
+        let li = document.createElement("li");
+        li.innerText = user;
+        list.appendChild(li);
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,9 +1,14 @@
-from flask import Flask, render_template, request, redirect
-from flask_socketio import SocketIO
+from flask import Flask, render_template, request, redirect, session
+from flask_socketio import SocketIO, emit
 import sqlite3
+
 online_users = set()
+
 app = Flask(__name__)
+app.secret_key = "123456"
 socketio = SocketIO(app)
+
+
 # د ډیټابیس جوړول
 def init_db():
     conn = sqlite3.connect('users.db')
@@ -78,7 +83,8 @@ def login():
     conn.close()
 
     if user:
-        return render_template("dashboard.html")
+        session["email"] = user[1]
+        return redirect("/lobby")
     else:
         return "Invalid login"
 
@@ -106,5 +112,26 @@ def handle_connect():
 @socketio.on("disconnect")
 def handle_disconnect():
     print("A user disconnected")
+@app.route("/lobby")
+def lobby():
+    if "email" not in session:
+        return redirect("/")
+    return render_template("lobby.html", email=session["email"])
+
+online_users = set()
+
+@socketio.on("connect")
+def connect():
+    if "email" in session:
+        online_users.add(session["email"])
+    emit("online_users", list(online_users), broadcast=True)
+
+@socketio.on("disconnect")
+def disconnect():
+    if "email" in session:
+        online_users.discard(session["email"])
+    emit("online_users", list(online_users), broadcast=True)
+
 if __name__ == "__main__":
    socketio.run(app, debug=True)
+   
