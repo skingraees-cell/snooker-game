@@ -1,24 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Users</title>
+    <title>Registered Users</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 70%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
 
-<h2>Registered Users</h2>
+<h1>Registered Users</h1>
 
-<table border="1" cellpadding="10">
+<table>
     <tr>
         <th>ID</th>
         <th>Email</th>
+        <th>Password</th>
     </tr>
 
     {% for user in users %}
     <tr>
         <td>{{ user[0] }}</td>
         <td>{{ user[1] }}</td>
+        <td>{{ user[2] }}</td>
     </tr>
     {% endfor %}
+
 </table>
 
 </body>

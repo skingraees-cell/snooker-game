@@ -89,7 +89,7 @@ def admin():
     conn = sqlite3.connect("users.db")
     cur = conn.cursor()
 
-    cur.execute("SELECT id, email FROM users")
+    cur.execute("SELECT id, email, password FROM users")
     users = cur.fetchall()
 
     conn.close()
