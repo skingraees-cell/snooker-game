@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect
+from flask_socketio import SocketIO
 import sqlite3
 
 app = Flask(__name__)
-
+socketio = SocketIO(app)
 # د ډیټابیس جوړول
 def init_db():
     conn = sqlite3.connect('users.db')
@@ -98,4 +99,4 @@ def admin():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+   socketio.run(app, debug=True)
