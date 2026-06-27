@@ -31,3 +31,21 @@ socket.on("online_users", function(users){
 
 </body>
 </html>
+<h2>Online Players</h2>
+
+<ul id="players">
+{% for user in online_users %}
+    {% if user != email %}
+    <li>
+        {{ user }}
+        <button onclick="challenge('{{ user }}')">Play</button>
+    </li>
+    {% endif %}
+{% endfor %}
+</ul>
+
+<script>
+function challenge(player){
+    alert("Challenge sent to: " + player);
+}
+</script>
