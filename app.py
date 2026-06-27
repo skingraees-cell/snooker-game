@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_socketio import SocketIO
 import sqlite3
-
+online_users = set()
 app = Flask(__name__)
 socketio = SocketIO(app)
 # د ډیټابیس جوړول
@@ -97,6 +97,14 @@ def admin():
 
     return render_template("admin.html", users=users)
 
+from flask_socketio import emit
 
+@socketio.on("connect")
+def handle_connect():
+    print("A user connected")
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    print("A user disconnected")
 if __name__ == "__main__":
    socketio.run(app, debug=True)
